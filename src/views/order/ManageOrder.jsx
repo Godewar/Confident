@@ -76,14 +76,14 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { getAllOrderBookings } from '../../api/menu';
 
 const ManageOrder = () => {
-  const [orders, setOrders] = useState([]);
-  const [filteredOrders, setFilteredOrders] = useState([]);
+  const [bookingss, setbookingss] = useState([]);
+  const [filteredbookingss, setFilteredbookingss] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [vehicleFilter, setVehicleFilter] = useState('all');
   const [priorityFilter, setPriorityFilter] = useState('all');
-  const [selectedOrders, setSelectedOrders] = useState([]);
-  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [selectedbookingss, setSelectedbookingss] = useState([]);
+  const [selectedbookings, setSelectedbookings] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
@@ -152,7 +152,7 @@ const ManageOrder = () => {
     }
   };
 
-  // Filter orders based on search and filters
+  // Filter bookingss based on search and filters
   useEffect(() => {
     setLoading(true);
     setError(null);
@@ -166,68 +166,68 @@ const ManageOrder = () => {
         } else if (Array.isArray(data)) {
           bookings = data;
         }
-        setOrders(bookings);
-        setFilteredOrders(bookings);
+        setbookingss(bookings);
+        setFilteredbookingss(bookings);
       })
       .catch(err => {
         setError('Failed to load bookings. Please try again.');
-        setOrders([]);
-        setFilteredOrders([]);
+        setbookingss([]);
+        setFilteredbookingss([]);
       })
       .finally(() => setLoading(false));
   }, []);
 
-  // Handle order selection
-  const handleOrderSelect = (orderId) => {
-    setSelectedOrders(prev => 
-      prev.includes(orderId) 
-        ? prev.filter(id => id !== orderId)
-        : [...prev, orderId]
+  // Handle bookings selection
+  const handlebookingsSelect = (bookingsId) => {
+    setSelectedbookingss(prev => 
+      prev.includes(bookingsId) 
+        ? prev.filter(id => id !== bookingsId)
+        : [...prev, bookingsId]
     );
   };
 
   // Handle select all
   const handleSelectAll = () => {
-    if (selectedOrders.length === filteredOrders.length) {
-      setSelectedOrders([]);
+    if (selectedbookingss.length === filteredbookingss.length) {
+      setSelectedbookingss([]);
     } else {
-      setSelectedOrders(filteredOrders.map(order => order._id || order.bookingId));
+      setSelectedbookingss(filteredbookingss.map(bookings => bookings._id || bookings.bookingId));
     }
   };
 
   // Handle bulk actions
   const handleBulkAction = () => {
-    if (bulkAction && selectedOrders.length > 0) {
-      setOrders(prev => prev.map(order => 
-        selectedOrders.includes(order._id || order.bookingId) 
-          ? { ...order, status: bulkAction }
-          : order
+    if (bulkAction && selectedbookingss.length > 0) {
+      setbookingss(prev => prev.map(bookings => 
+        selectedbookingss.includes(bookings._id || bookings.bookingId) 
+          ? { ...bookings, status: bulkAction }
+          : bookings
       ));
-      setSelectedOrders([]);
+      setSelectedbookingss([]);
       setBulkActionDialogOpen(false);
       setBulkAction('');
     }
   };
 
-  // Handle order detail view
-  const handleViewDetails = (order) => {
-    setSelectedOrder(order);
+  // Handle bookings detail view
+  const handleViewDetails = (bookings) => {
+    setSelectedbookings(bookings);
     setDetailDialogOpen(true);
   };
 
-  // Handle order edit
-  const handleEditOrder = (order) => {
-    setSelectedOrder(order);
+  // Handle bookings edit
+  const handleEditbookings = (bookings) => {
+    setSelectedbookings(bookings);
     setEditDialogOpen(true);
   };
 
   // Calculate statistics
-  const totalOrders = filteredOrders.length;
-  const pendingOrders = filteredOrders.filter(order => order.status === 'Pending').length;
-  const inProgressOrders = filteredOrders.filter(order => order.status === 'In Progress').length;
-  const completedOrders = filteredOrders.filter(order => order.status === 'Completed').length;
-  const canceledOrders = filteredOrders.filter(order => order.status === 'Canceled').length;
-  const totalAmount = filteredOrders.reduce((sum, order) => sum + (order.amount || order.totalAmount || order.price || 0), 0);
+  const totalbookingss = filteredbookingss.length;
+  const pendingbookingss = filteredbookingss.filter(bookings => bookings.status === 'Pending').length;
+  const inProgressbookingss = filteredbookingss.filter(bookings => bookings.status === 'In Progress').length;
+  const completedbookingss = filteredbookingss.filter(bookings => bookings.status === 'Completed').length;
+  const canceledbookingss = filteredbookingss.filter(bookings => bookings.status === 'Canceled').length;
+  const totalAmount = filteredbookingss.reduce((sum, bookings) => sum + (bookings.amount || bookings.totalAmount || bookings.price || 0), 0);
 
   if (loading) {
     return (
@@ -248,7 +248,7 @@ const ManageOrder = () => {
   return (
     <Box sx={{ p: 3, minHeight: '100vh', bgcolor: 'background.default' }}>
       <Typography variant="h4" sx={{ mb: 3, fontWeight: 700, color: 'primary.main' }}>
-        Manage Orders
+        Manage bookingss
       </Typography>
 
       {/* Statistics Cards */}
@@ -257,9 +257,9 @@ const ManageOrder = () => {
           <Card sx={{ bgcolor: 'primary.main', color: 'white' }}>
             <CardContent>
               <Typography variant="h6" gutterBottom>
-                Total Orders
+                Total bookingss
               </Typography>
-              <Typography variant="h4">{totalOrders}</Typography>
+              <Typography variant="h4">{totalbookingss}</Typography>
             </CardContent>
           </Card>
         </Grid>
@@ -269,7 +269,7 @@ const ManageOrder = () => {
               <Typography variant="h6" gutterBottom>
                 Pending
               </Typography>
-              <Typography variant="h4">{pendingOrders}</Typography>
+              <Typography variant="h4">{pendingbookingss}</Typography>
             </CardContent>
           </Card>
         </Grid>
@@ -279,7 +279,7 @@ const ManageOrder = () => {
               <Typography variant="h6" gutterBottom>
                 In Progress
               </Typography>
-              <Typography variant="h4">{inProgressOrders}</Typography>
+              <Typography variant="h4">{inProgressbookingss}</Typography>
             </CardContent>
           </Card>
         </Grid>
@@ -289,7 +289,7 @@ const ManageOrder = () => {
               <Typography variant="h6" gutterBottom>
                 Completed
               </Typography>
-              <Typography variant="h4">{completedOrders}</Typography>
+              <Typography variant="h4">{completedbookingss}</Typography>
             </CardContent>
           </Card>
         </Grid>
@@ -299,7 +299,7 @@ const ManageOrder = () => {
               <Typography variant="h6" gutterBottom>
                 Canceled
               </Typography>
-              <Typography variant="h4">{canceledOrders}</Typography>
+              <Typography variant="h4">{canceledbookingss}</Typography>
             </CardContent>
           </Card>
         </Grid>
@@ -321,7 +321,7 @@ const ManageOrder = () => {
           <Grid item xs={12} md={3}>
             <TextField
               fullWidth
-              placeholder="Search orders..."
+              placeholder="Search bookingss..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               InputProps={{
@@ -400,7 +400,7 @@ const ManageOrder = () => {
               color="primary"
               startIcon={<DateRangeIcon />}
               onClick={() => setBulkActionDialogOpen(true)}
-              disabled={selectedOrders.length === 0}
+              disabled={selectedbookingss.length === 0}
               fullWidth
             >
               Bulk
@@ -409,7 +409,7 @@ const ManageOrder = () => {
         </Grid>
       </Paper>
 
-      {/* Orders Table */}
+      {/* bookingss Table */}
       <Paper sx={{ overflow: 'hidden' }}>
         <TableContainer>
           <Table>
@@ -417,18 +417,18 @@ const ManageOrder = () => {
               <TableRow sx={{ bgcolor: 'primary.main' }}>
                 <TableCell sx={{ color: 'white', fontWeight: 600 }}>
                   <Checkbox
-                    checked={selectedOrders.length === filteredOrders.length && filteredOrders.length > 0}
-                    indeterminate={selectedOrders.length > 0 && selectedOrders.length < filteredOrders.length}
+                    checked={selectedbookingss.length === filteredbookingss.length && filteredbookingss.length > 0}
+                    indeterminate={selectedbookingss.length > 0 && selectedbookingss.length < filteredbookingss.length}
                     onChange={handleSelectAll}
                     sx={{ color: 'white' }}
                   />
                 </TableCell>
                 <TableCell sx={{ color: 'white', fontWeight: 600 }}>S. No.</TableCell>
-                <TableCell sx={{ color: 'white', fontWeight: 600 }}>Order ID</TableCell>
+                <TableCell sx={{ color: 'white', fontWeight: 600 }}>bookings ID</TableCell>
                 <TableCell sx={{ color: 'white', fontWeight: 600 }}>Customer</TableCell>
                 <TableCell sx={{ color: 'white', fontWeight: 600 }}>Driver</TableCell>
                 <TableCell sx={{ color: 'white', fontWeight: 600 }}>Date & Time</TableCell>
-                <TableCell sx={{ color: 'white', fontWeight: 600 }}>Vehicle</TableCell>
+                <TableCell sx={{ color: 'white', fontWeight: 600 }}>Trip Type</TableCell>
                 <TableCell sx={{ color: 'white', fontWeight: 600 }}>Amount</TableCell>
                 <TableCell sx={{ color: 'white', fontWeight: 600 }}>Status</TableCell>
                 <TableCell sx={{ color: 'white', fontWeight: 600 }}>Priority</TableCell>
@@ -436,48 +436,48 @@ const ManageOrder = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredOrders.map((order, index) => {
-                const statusInfo = getStatusInfo(order.status || 'pending');
+              {filteredbookingss.map((bookings, index) => {
+                const statusInfo = getStatusInfo(bookings.status || 'pending');
                 return (
-                  <TableRow key={order._id || order.bookingId || index} hover>
+                  <TableRow key={bookings._id || bookings.bookingId || index} hover>
                     <TableCell>
                       <Checkbox
-                        checked={selectedOrders.includes(order._id || order.bookingId)}
-                        onChange={() => handleOrderSelect(order._id || order.bookingId)}
+                        checked={selectedbookingss.includes(bookings._id || bookings.bookingId)}
+                        onChange={() => handlebookingsSelect(bookings._id || bookings.bookingId)}
                       />
                     </TableCell>
                     <TableCell>{index + 1}</TableCell>
                     <TableCell>
                       <Typography variant="body2" sx={{ fontWeight: 600, color: 'primary.main' }}>
-                        {order._id || order.bookingId || `ORD${String(index + 1).padStart(3, '0')}`}
+                        {bookings._id || bookings.bookingId || `ORD${String(index + 1).padStart(3, '0')}`}
                       </Typography>
                     </TableCell>
                     <TableCell>
                       <Box>
                         <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                          {order.userId?.name || order.customerName || order.userName || 'N/A'}
+                          {bookings.userId?.name || bookings.customerName || bookings.userName || 'N/A'}
                         </Typography>
                         <Typography variant="caption" color="text.secondary">
-                          {order.userId?._id || order.customerId || 'N/A'}
+                          {bookings.userId?._id || bookings.customerId || 'N/A'}
                         </Typography>
                         <Box sx={{ display: 'flex', alignItems: 'center', mt: 0.5 }}>
                           <PhoneIcon sx={{ fontSize: 12, mr: 0.5, color: 'text.secondary' }} />
                           <Typography variant="caption" color="text.secondary">
-                            {order.userId?.mobile || order.customerMobile || 'N/A'}
+                            {bookings.userId?.mobile || bookings.customerMobile || 'N/A'}
                           </Typography>
                         </Box>
                       </Box>
                     </TableCell>
                     <TableCell>
-                      {order.driverId?.name || order.driverName ? (
+                      {bookings.driverId?.name || bookings.driverName ? (
                         <Box>
                           <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                            {order.driverId?.name || order.driverName}
+                            {bookings.driverId?.name || bookings.driverName}
                           </Typography>
                           <Box sx={{ display: 'flex', alignItems: 'center', mt: 0.5 }}>
                             <PhoneIcon sx={{ fontSize: 12, mr: 0.5, color: 'text.secondary' }} />
                             <Typography variant="caption" color="text.secondary">
-                              {order.driverId?.mobile || order.driverMobile || 'N/A'}
+                              {bookings.driverId?.mobile || bookings.driverMobile || 'N/A'}
                             </Typography>
                           </Box>
                         </Box>
@@ -488,30 +488,30 @@ const ManageOrder = () => {
                     <TableCell>
                       <Box>
                         <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                          {order.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'N/A'}
+                          {bookings.createdAt ? new Date(bookings.createdAt).toLocaleDateString() : 'N/A'}
                         </Typography>
                         <Typography variant="caption" color="text.secondary">
-                          {order.createdAt ? new Date(order.createdAt).toLocaleTimeString() : 'N/A'}
+                          {bookings.createdAt ? new Date(bookings.createdAt).toLocaleTimeString() : 'N/A'}
                         </Typography>
                       </Box>
                     </TableCell>
                     <TableCell>
                       <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        {getVehicleIcon(order.vehicleType || '2W')}
+                        {getVehicleIcon(bookings.trip_type|| 'One Way')}
                         <Typography variant="body2" sx={{ ml: 1 }}>
-                          {order.vehicleType || 'N/A'}
+                          {bookings.trip_Type  || 'N/A'}
                         </Typography>
                       </Box>
                     </TableCell>
                     <TableCell>
                       <Typography variant="body2" sx={{ fontWeight: 600, color: 'primary.main' }}>
-                        ₹{order.amount || order.totalAmount || order.price || 'N/A'}
+                        ₹{bookings.amount || bookings.totalAmount || bookings.price || 'N/A'}
                       </Typography>
                     </TableCell>
                     <TableCell>
                       <Chip
                         icon={statusInfo.icon}
-                        label={(order.status || 'pending').charAt(0).toUpperCase() + (order.status || 'pending').slice(1)}
+                        label={(bookings.status || 'pending').charAt(0).toUpperCase() + (bookings.status || 'pending').slice(1)}
                         color={statusInfo.color}
                         size="small"
                         sx={{ fontWeight: 600 }}
@@ -519,8 +519,8 @@ const ManageOrder = () => {
                     </TableCell>
                     <TableCell>
                       <Chip
-                        label={order.priority || 'Medium'}
-                        color={getPriorityColor(order.priority || 'Medium')}
+                        label={bookings.priority || 'Medium'}
+                        color={getPriorityColor(bookings.priority || 'Medium')}
                         size="small"
                         sx={{ fontWeight: 600 }}
                       />
@@ -531,16 +531,16 @@ const ManageOrder = () => {
                           <IconButton
                             color="primary"
                             size="small"
-                            onClick={() => handleViewDetails(order)}
+                            onClick={() => handleViewDetails(bookings)}
                           >
                             <ViewIcon />
                           </IconButton>
                         </Tooltip>
-                        <Tooltip title="Edit Order">
+                        <Tooltip title="Edit bookings">
                           <IconButton
                             color="secondary"
                             size="small"
-                            onClick={() => handleEditOrder(order)}
+                            onClick={() => handleEditbookings(bookings)}
                           >
                             <EditIcon />
                           </IconButton>
@@ -561,9 +561,9 @@ const ManageOrder = () => {
             </TableBody>
           </Table>
         </TableContainer>
-        {filteredOrders.length === 0 && (
+        {filteredbookingss.length === 0 && (
           <Box sx={{ p: 3, textAlign: 'center' }}>
-            <Alert severity="info">No orders found matching your criteria.</Alert>
+            <Alert severity="info">No bookingss found matching your criteria.</Alert>
           </Box>
         )}
       </Paper>
@@ -587,7 +587,7 @@ const ManageOrder = () => {
         <DialogTitle>Bulk Action</DialogTitle>
         <DialogContent>
           <Typography variant="body2" sx={{ mb: 2 }}>
-            Selected {selectedOrders.length} order(s)
+            Selected {selectedbookingss.length} bookings(s)
           </Typography>
           <FormControl fullWidth>
             <InputLabel>Action</InputLabel>
@@ -611,7 +611,7 @@ const ManageOrder = () => {
         </DialogActions>
       </Dialog>
 
-      {/* Order Detail Dialog */}
+      {/* bookings Detail Dialog */}
       <Dialog
         open={detailDialogOpen}
         onClose={() => setDetailDialogOpen(false)}
@@ -621,56 +621,56 @@ const ManageOrder = () => {
         <DialogTitle>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <ReceiptIcon sx={{ mr: 1, color: 'primary.main' }} />
-            Order Details - {selectedOrder?.id}
+            bookings Details - {selectedbookings?.id}
           </Box>
         </DialogTitle>
         <DialogContent dividers>
-          {selectedOrder && (
+          {selectedbookings && (
             <Grid container spacing={3}>
-              {/* Order Information */}
+              {/* bookings Information */}
               <Grid item xs={12} md={6}>
                 <Typography variant="h6" sx={{ mb: 2, color: 'primary.main' }}>
-                  Order Information
+                  bookings Information
                 </Typography>
                 <Stack spacing={2}>
                   <Box>
-                    <Typography variant="body2" color="text.secondary">Order ID</Typography>
-                    <Typography variant="body1" sx={{ fontWeight: 600 }}>{selectedOrder.id}</Typography>
+                    <Typography variant="body2" color="text.secondary">bookings ID</Typography>
+                    <Typography variant="body1" sx={{ fontWeight: 600 }}>{selectedbookings.id}</Typography>
                   </Box>
                   <Box>
-                    <Typography variant="body2" color="text.secondary">Order Date</Typography>
+                    <Typography variant="body2" color="text.secondary">bookings Date</Typography>
                     <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                      {new Date(selectedOrder.orderDate).toLocaleDateString()} at {selectedOrder.orderTime}
+                      {new Date(selectedbookings.bookingsDate).toLocaleDateString()} at {selectedbookings.bookingsTime}
                     </Typography>
                   </Box>
                   <Box>
-                    <Typography variant="body2" color="text.secondary">Order Type</Typography>
-                    <Typography variant="body1" sx={{ fontWeight: 600 }}>{selectedOrder.orderType}</Typography>
+                    <Typography variant="body2" color="text.secondary">bookings Type</Typography>
+                    <Typography variant="body1" sx={{ fontWeight: 600 }}>{selectedbookings.bookingsType}</Typography>
                   </Box>
                   <Box>
                     <Typography variant="body2" color="text.secondary">Payment Method</Typography>
-                    <Typography variant="body1" sx={{ fontWeight: 600 }}>{selectedOrder.paymentMethod}</Typography>
+                    <Typography variant="body1" sx={{ fontWeight: 600 }}>{selectedbookings.paymentMethod}</Typography>
                   </Box>
                   <Box>
                     <Typography variant="body2" color="text.secondary">Amount</Typography>
                     <Typography variant="h6" sx={{ fontWeight: 600, color: 'primary.main' }}>
-                      ₹{selectedOrder.amount}
+                      ₹{selectedbookings.amount}
                     </Typography>
                   </Box>
                   <Box>
                     <Typography variant="body2" color="text.secondary">Status</Typography>
                     <Chip
-                      label={selectedOrder.status}
-                      color={getStatusInfo(selectedOrder.status).color}
-                      icon={getStatusInfo(selectedOrder.status).icon}
+                      label={selectedbookings.status}
+                      color={getStatusInfo(selectedbookings.status).color}
+                      icon={getStatusInfo(selectedbookings.status).icon}
                       sx={{ fontWeight: 600 }}
                     />
                   </Box>
                   <Box>
                     <Typography variant="body2" color="text.secondary">Priority</Typography>
                     <Chip
-                      label={selectedOrder.priority}
-                      color={getPriorityColor(selectedOrder.priority)}
+                      label={selectedbookings.priority}
+                      color={getPriorityColor(selectedbookings.priority)}
                       sx={{ fontWeight: 600 }}
                     />
                   </Box>
@@ -685,24 +685,24 @@ const ManageOrder = () => {
                 <Stack spacing={2}>
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     <Avatar sx={{ mr: 2, bgcolor: 'primary.main' }}>
-                      {selectedOrder.customerName[0]}
+                      {selectedbookings.customerName[0]}
                     </Avatar>
                     <Box>
                       <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                        {selectedOrder.customerName}
+                        {selectedbookings.customerName}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
-                        {selectedOrder.customerId}
+                        {selectedbookings.customerId}
                       </Typography>
                     </Box>
                   </Box>
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     <PhoneIcon sx={{ mr: 1, color: 'text.secondary' }} />
-                    <Typography variant="body2">{selectedOrder.customerMobile}</Typography>
+                    <Typography variant="body2">{selectedbookings.customerMobile}</Typography>
                   </Box>
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     <EmailIcon sx={{ mr: 1, color: 'text.secondary' }} />
-                    <Typography variant="body2">{selectedOrder.customerEmail}</Typography>
+                    <Typography variant="body2">{selectedbookings.customerEmail}</Typography>
                   </Box>
                 </Stack>
               </Grid>
@@ -714,24 +714,24 @@ const ManageOrder = () => {
                 </Typography>
                 <Grid container spacing={2}>
                   <Grid item xs={12} md={6}>
-                    <Box sx={{ p: 2, border: '1px solid', borderColor: 'divider', borderRadius: 1 }}>
+                    <Box sx={{ p: 2, bbookings: '1px solid', bbookingsColor: 'divider', bbookingsRadius: 1 }}>
                       <Typography variant="subtitle2" color="primary" gutterBottom>
                         Pickup Location
                       </Typography>
                       <Box sx={{ display: 'flex', alignItems: 'center' }}>
                         <LocationIcon sx={{ mr: 1, color: 'success.main' }} />
-                        <Typography variant="body2">{selectedOrder.pickupLocation}</Typography>
+                        <Typography variant="body2">{selectedbookings.pickupAddress}</Typography>
                       </Box>
                     </Box>
                   </Grid>
                   <Grid item xs={12} md={6}>
-                    <Box sx={{ p: 2, border: '1px solid', borderColor: 'divider', borderRadius: 1 }}>
+                    <Box sx={{ p: 2, bbookings: '1px solid', bbookingsColor: 'divider', bbookingsRadius: 1 }}>
                       <Typography variant="subtitle2" color="primary" gutterBottom>
                         Drop Location
                       </Typography>
                       <Box sx={{ display: 'flex', alignItems: 'center' }}>
                         <LocationIcon sx={{ mr: 1, color: 'error.main' }} />
-                        <Typography variant="body2">{selectedOrder.dropLocation}</Typography>
+                        <Typography variant="body2">{selectedbookings.dropAddress}</Typography>
                       </Box>
                     </Box>
                   </Grid>
@@ -739,12 +739,12 @@ const ManageOrder = () => {
               </Grid>
 
               {/* Driver Information */}
-              {selectedOrder.driverName && (
+              {selectedbookings.driverName && (
                 <Grid item xs={12}>
                   <Typography variant="h6" sx={{ mb: 2, color: 'primary.main' }}>
                     Driver Information
                   </Typography>
-                  <Box sx={{ p: 2, border: '1px solid', borderColor: 'divider', borderRadius: 1 }}>
+                  <Box sx={{ p: 2, bbookings: '1px solid', bbookingsColor: 'divider', bbookingsRadius: 1 }}>
                     <Grid container spacing={2} alignItems="center">
                       <Grid item>
                         <Avatar sx={{ bgcolor: 'secondary.main' }}>
@@ -753,20 +753,20 @@ const ManageOrder = () => {
                       </Grid>
                       <Grid item xs>
                         <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                          {selectedOrder.driverName}
+                          {selectedbookings.driverName}
                         </Typography>
                         <Box sx={{ display: 'flex', alignItems: 'center', mt: 0.5 }}>
                           <PhoneIcon sx={{ fontSize: 16, mr: 0.5, color: 'text.secondary' }} />
                           <Typography variant="body2" color="text.secondary">
-                            {selectedOrder.driverMobile}
+                            {selectedbookings.driverMobile}
                           </Typography>
                         </Box>
                       </Grid>
                       <Grid item>
                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                          {getVehicleIcon(selectedOrder.vehicleType)}
+                          {getVehicleIcon(selectedbookings.vehicleType)}
                           <Typography variant="body2" sx={{ ml: 1 }}>
-                            {selectedOrder.vehicleType}
+                            {selectedbookings.vehicleType}
                           </Typography>
                         </Box>
                       </Grid>
@@ -778,36 +778,36 @@ const ManageOrder = () => {
               {/* Timeline Information */}
               <Grid item xs={12}>
                 <Typography variant="h6" sx={{ mb: 2, color: 'primary.main' }}>
-                  Order Timeline
+                  bookings Timeline
                 </Typography>
                 <Stack spacing={2}>
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     <CalendarIcon sx={{ mr: 2, color: 'primary.main' }} />
                     <Box>
-                      <Typography variant="body2" color="text.secondary">Order Created</Typography>
+                      <Typography variant="body2" color="text.secondary">bookings Created</Typography>
                       <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                        {new Date(selectedOrder.orderDate).toLocaleDateString()} at {selectedOrder.orderTime}
+                        {new Date(selectedbookings.bookingsDate).toLocaleDateString()} at {selectedbookings.bookingsTime}
                       </Typography>
                     </Box>
                   </Box>
-                  {selectedOrder.assignedAt && (
+                  {selectedbookings.assignedAt && (
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                       <AssignmentIcon sx={{ mr: 2, color: 'warning.main' }} />
                       <Box>
                         <Typography variant="body2" color="text.secondary">Assigned to Driver</Typography>
                         <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                          {selectedOrder.assignedAt}
+                          {selectedbookings.assignedAt}
                         </Typography>
                       </Box>
                     </Box>
                   )}
-                  {selectedOrder.completedAt && (
+                  {selectedbookings.completedAt && (
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                       <CheckCircleIcon sx={{ mr: 2, color: 'success.main' }} />
                       <Box>
                         <Typography variant="body2" color="text.secondary">Completed</Typography>
                         <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                          {selectedOrder.completedAt}
+                          {selectedbookings.completedAt}
                         </Typography>
                       </Box>
                     </Box>

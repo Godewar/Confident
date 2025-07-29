@@ -4,15 +4,13 @@ import { useParams } from 'react-router-dom';
 import { getAllOrderBookings } from '../../api/menu';
 
 const statusColors = {
-  completed: 'success',
-  pending: 'warning',
-  canceled: 'error',
+  // Remove duplicates and combine similar statuses
   active: 'info',
-  completed: 'success',
-  cancelled: 'error',
   pending: 'warning',
   ongoing: 'info',
+  completed: 'success',
   finished: 'success',
+  canceled: 'error',
   cancelled: 'error'
 };
 
@@ -155,4 +153,4 @@ export default function OrdersList() {
       </TableContainer>
     </Box>
   );
-} 
+}

@@ -51,207 +51,7 @@ import {
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-
-// Dummy customer data
-const dummyCustomers = {
-  'CUST010': {
-    id: 'CUST010',
-    name: 'Deepak Mehta',
-    email: 'deepak.mehta@email.com',
-    mobile: '9876543210',
-    status: 'Active',
-    rating: 4.2,
-    totalOrders: 25,
-    joinDate: '2023-01-15',
-    address: '123, MG Road, Delhi - 110001'
-  }
-};
-
-// Dummy orders data for the customer
-const dummyOrders = [
-  {
-    id: 'ORD1001',
-    customerId: 'CUST010',
-    customerName: 'Deepak Mehta',
-    customerMobile: '9876543210',
-    customerEmail: 'deepak.mehta@email.com',
-    orderDate: '2024-01-15',
-    orderTime: '09:30 AM',
-    amount: 450,
-    status: 'Completed',
-    vehicleType: '2W',
-    pickup: {
-      location: 'Sector 10, City A',
-      pincode: '110001',
-      city: 'New Delhi',
-      time: '09:00 AM'
-    },
-    drop: {
-      location: 'Sector 22, City B',
-      pincode: '110022',
-      city: 'New Delhi',
-      time: '10:30 AM'
-    },
-    driver: {
-      name: 'Ravi Kumar',
-      mobile: '9000000001',
-      rating: 4.5
-    },
-    receiver: {
-      name: 'Ravi Kumar',
-      number: '9000000001',
-      pincode: '110011',
-      address: '123, MG Road, Delhi'
-    }
-  },
-  {
-    id: 'ORD1002',
-    customerId: 'CUST010',
-    customerName: 'Deepak Mehta',
-    customerMobile: '9876543210',
-    customerEmail: 'deepak.mehta@email.com',
-    orderDate: '2024-01-16',
-    orderTime: '11:15 AM',
-    amount: 320,
-    status: 'Completed',
-    vehicleType: '3W',
-    pickup: {
-      location: 'Connaught Place, Central Delhi',
-      pincode: '110001',
-      city: 'New Delhi',
-      time: '11:00 AM'
-    },
-    drop: {
-      location: 'Lajpat Nagar, South Delhi',
-      pincode: '110024',
-      city: 'New Delhi',
-      time: '12:15 PM'
-    },
-    driver: {
-      name: 'Suresh Singh',
-      mobile: '9000000002',
-      rating: 4.2
-    },
-    receiver: {
-      name: 'Priya Sharma',
-      number: '9000000002',
-      pincode: '110024',
-      address: '456, Lajpat Nagar, Delhi'
-    }
-  },
-  {
-    id: 'ORD1003',
-    customerId: 'CUST010',
-    customerName: 'Deepak Mehta',
-    customerMobile: '9876543210',
-    customerEmail: 'deepak.mehta@email.com',
-    orderDate: '2024-01-17',
-    orderTime: '02:45 PM',
-    amount: 800,
-    status: 'Completed',
-    vehicleType: 'Truck',
-    pickup: {
-      location: 'Industrial Area, Okhla',
-      pincode: '110020',
-      city: 'New Delhi',
-      time: '02:30 PM'
-    },
-    drop: {
-      location: 'Gurgaon Cyber City',
-      pincode: '122002',
-      city: 'Gurgaon',
-      time: '04:00 PM'
-    },
-    driver: {
-      name: 'Amit Sharma',
-      mobile: '9000000003',
-      rating: 4.0
-    },
-    receiver: {
-      name: 'Rajesh Kumar',
-      number: '9000000003',
-      pincode: '122002',
-      address: '789, Cyber City, Gurgaon'
-    }
-  },
-  {
-    id: 'ORD1004',
-    customerId: 'CUST010',
-    customerName: 'Deepak Mehta',
-    customerMobile: '9876543210',
-    customerEmail: 'deepak.mehta@email.com',
-    orderDate: '2024-01-18',
-    orderTime: '10:00 AM',
-    amount: 280,
-    status: 'Completed',
-    vehicleType: '2W',
-    pickup: {
-      location: 'Karol Bagh, Central Delhi',
-      pincode: '110005',
-      city: 'New Delhi',
-      time: '09:45 AM'
-    },
-    drop: {
-      location: 'Dwarka Sector 12, West Delhi',
-      pincode: '110075',
-      city: 'New Delhi',
-      time: '11:15 AM'
-    },
-    driver: {
-      name: 'Vikram Singh',
-      mobile: '9000000004',
-      rating: 4.3
-    },
-    receiver: {
-      name: 'Anita Verma',
-      number: '9000000004',
-      pincode: '110075',
-      address: '321, Dwarka Sector 12, Delhi'
-    }
-  },
-  {
-    id: 'ORD1005',
-    customerId: 'CUST010',
-    customerName: 'Deepak Mehta',
-    customerMobile: '9876543210',
-    customerEmail: 'deepak.mehta@email.com',
-    orderDate: '2024-01-19',
-    orderTime: '03:30 PM',
-    amount: 650,
-    status: 'Completed',
-    vehicleType: '3W',
-    pickup: {
-      location: 'Saket, South Delhi',
-      pincode: '110017',
-      city: 'New Delhi',
-      time: '03:15 PM'
-    },
-    drop: {
-      location: 'Greater Noida Sector 1',
-      pincode: '201310',
-      city: 'Greater Noida',
-      time: '04:45 PM'
-    },
-    driver: {
-      name: 'Mohan Lal',
-      mobile: '9000000005',
-      rating: 4.1
-    },
-    receiver: {
-      name: 'Sunita Devi',
-      number: '9000000005',
-      pincode: '201310',
-      address: '654, Greater Noida Sector 1'
-    }
-  }
-];
-
-const vehicleTypes = [
-  { label: 'All', icon: <FilterIcon /> },
-  { label: '2W', icon: <BikeIcon /> },
-  { label: '3W', icon: <AutoIcon /> },
-  { label: 'Truck', icon: <TruckIcon /> }
-];
+import { getCustomerBookings } from '../../api/menu';
 
 const CustomerOrders = () => {
   const { customerId } = useParams();
@@ -268,23 +68,29 @@ const CustomerOrders = () => {
     startDate: null,
     endDate: null
   });
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchCustomerData = async () => {
-      setLoading(true);
-      // Simulate API call
-      setTimeout(() => {
-        const customerData = dummyCustomers[customerId];
-        if (customerData) {
-          setCustomer(customerData);
-          setOrders(dummyOrders);
-        }
-        setLoading(false);
-      }, 1000);
-    };
-
     fetchCustomerData();
   }, [customerId]);
+
+  const fetchCustomerData = async () => {
+    try {
+      setLoading(true);
+      const response = await getCustomerBookings(customerId);
+      
+      if (response.success) {
+        setCustomer(response.customer);
+        setOrders(response.bookings);
+      } else {
+        throw new Error(response.message);
+      }
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleOrderView = (order) => {
     setSelectedOrder(order);
@@ -378,6 +184,14 @@ const CustomerOrders = () => {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
         <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box sx={{ p: 3 }}>
+        <Alert severity="error">{error}</Alert>
       </Box>
     );
   }
@@ -878,4 +692,4 @@ const CustomerOrders = () => {
   );
 };
 
-export default CustomerOrders; 
+export default CustomerOrders;

@@ -12,7 +12,7 @@ import AuthCardWrapper from './AuthCardWrapper';
 import AuthRegister from '../auth-forms/AuthRegister';
 
 import Logo from 'ui-component/Logo';
-import AuthFooter from 'ui-component/cards/AuthFooter';
+import AuthFooter from '../../../ui-component/cards/AuthFooter';
 
 export default function Register() {
   const downMD = useMediaQuery((theme) => theme.breakpoints.down('md'));

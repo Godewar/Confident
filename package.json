@@ -14,7 +14,7 @@
     "@tabler/icons-react": "3.31.0",
     "@vitejs/plugin-react": "4.4.1",
     "apexcharts": "4.7.0",
-    "axios": "^1.9.0",
+    "axios": "^1.11.0",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
     "framer-motion": "12.10.1",

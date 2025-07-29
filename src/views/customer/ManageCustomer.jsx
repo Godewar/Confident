@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Paper, List, ListItemButton, ListItemIcon, ListItemText, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Avatar, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Tabs, Tab, Chip } from '@mui/material';
+import { Box, Typography, Paper, List, ListItemButton, ListItemIcon, ListItemText, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Avatar, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Tabs, Tab, Chip, CircularProgress, Alert } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import CancelIcon from '@mui/icons-material/Cancel';
@@ -1627,8 +1627,7 @@ const ManageCustomer = () => {
                           <TableCell>
                             <Typography variant="body2" color="text.secondary">
                               {row.lastTransaction !== 'N/A' ? new Date(row.lastTransaction).toLocaleDateString() : 'N/A'}
-                            </Typography>
-                          </TableCell>
+                            </Typography                          </TableCell>
                         </TableRow>
                       ))
                     )}
@@ -1871,4 +1870,4 @@ const ManageCustomer = () => {
   );
 };
 
-export default ManageCustomer; 
+export default ManageCustomer;

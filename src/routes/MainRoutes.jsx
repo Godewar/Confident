@@ -5,7 +5,6 @@ import MainLayout from 'layout/MainLayout';
 import Loadable from 'ui-component/Loadable';
 import AddAdmin from './AddAdmin';
 import AlllAdmins from './AlllAdmins';
-// import AddDriverSafety from './AddDriverSafety';
 import AddPrice from '../views/price/AddPrice';
 import VehicleList from '../views/vehicle/VehicleList';
 import OrderAnalytics from '../views/order/OrderAnalytics';
@@ -17,6 +16,7 @@ import TicketRise from '../views/app/TicketRise';
 import CustomerTicketQueries from '../views/app/CustomerTicketQueries';
 import PartnerTicketQueries from '../views/app/PartnerTicketQueries';
 import CouponCode from '../views/app/CouponCode';
+import DriverProfile from '../views/driver/DriverProfile';
 
 // dashboard routing
 const DashboardDefault = Loadable(lazy(() => import('views/dashboard/Default')));
@@ -42,6 +42,8 @@ const CustomerOrders = Loadable(lazy(() => import('views/customer/CustomerOrders
 const OrderDetails = Loadable(lazy(() => import('views/order/OrderDetails')));
 const ManageOrder = Loadable(lazy(() => import('views/order/ManageOrder')));
 const CustomerWallet = Loadable(lazy(() => import('views/customer/CustomerWallet')));
+
+
 // sample page routing
 const SamplePage = Loadable(lazy(() => import('views/sample-page')));
 
@@ -102,10 +104,6 @@ const MainRoutes = {
     },
     {
       path: 'drivers/:id',
-      element: <DriverDetail />
-    },
-    {
-      path: 'driver/details/:regNo',
       element: <DriverDetail />
     },
     {
@@ -192,6 +190,10 @@ const MainRoutes = {
       path: 'coupon-code',
       element: <CouponCode />
     },
+    {
+      path: 'customer/:id',
+      element: <CustomerDetail />
+    }
     // {
     //   path: 'typography',
     //   element: <UtilsTypography />

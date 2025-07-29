@@ -27,7 +27,9 @@ import {
   Divider,
   Container,
   Stack,
-  IconButton
+  IconButton,
+  CircularProgress,
+  Alert
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
@@ -54,380 +56,369 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import DownloadIcon from '@mui/icons-material/Download';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
+import SearchIcon from '@mui/icons-material/Search';
+import {
+  getDriverById,
+  getDriverDocuments,
+  getDriverOrders,
+  getDriverTransactions,
+  uploadDriverDocument,
+  updateDriverBank,
+  updateDriverWallet
+} from '../../api/menu';
 
 // Dummy data for demonstration
-const dummyDrivers = [
-  {
-    id: 'DRV001',
-    name: 'John Doe',
-    status: 'Active',
-    mobile: '9876543210',
-    email: 'john.doe@email.com',
-    joiningDate: '2023-01-15',
-    driverId: 'DRV001',
-    rating: 4.5,
-    totalOrders: 156,
-    completedOrders: 142,
-    cancelledOrders: 8,
-    totalEarnings: 45600,
-    address: '123 Main St, City A, State - 123456',
-    vehicleType: '2W',
-    online: true,
-    licenseNumber: 'DL-1234567890123',
-    aadharNumber: '1234-5678-9012',
-    panNumber: 'ABCDE1234F',
-    lastActive: '2024-01-24 14:30',
-    bank: {
-      accountNumber: '1234567890',
-      ifsc: 'SBIN0001234',
-      bankName: 'State Bank of India',
-      branch: 'Connaught Place',
-      holder: 'John Doe'
-    },
-    balance: 2500,
-    vehicleDetails: {
-      model: 'Honda Activa 6G',
-      registrationNumber: 'MH-01-AB-1234',
-      color: 'White',
-      year: '2022'
-    },
-    currentOrder: { 
-      id: 'ORD123', 
-      item: 'Electronics Package', 
-      status: 'In Transit',
-      pickup: 'Sector 10, City A',
-      drop: 'Sector 22, City B',
-      amount: 450,
-      estimatedDelivery: '2024-01-24 16:00'
-    },
-    orders: {
-      '2W': [
-        { 
-          orderId: 'ORD001', 
-          date: '2024-01-15', 
-          amount: 150, 
-          status: 'Completed', 
-          customer: 'Alice Johnson', 
-          customerMobile: '9000000001',
-          pickup: {
-            location: 'Sector 10, City A',
-            pincode: '110001',
-            city: 'New Delhi',
-            time: '09:00 AM'
-          },
-          drop: {
-            location: 'Sector 22, City B',
-            pincode: '110022',
-            city: 'New Delhi',
-            time: '10:30 AM'
-          }
-        },
-        { 
-          orderId: 'ORD002', 
-          date: '2024-01-16', 
-          amount: 200, 
-          status: 'Completed', 
-          customer: 'Bob Smith', 
-          customerMobile: '9000000002',
-          pickup: {
-            location: 'Connaught Place, Central Delhi',
-            pincode: '110001',
-            city: 'New Delhi',
-            time: '11:00 AM'
-          },
-          drop: {
-            location: 'Lajpat Nagar, South Delhi',
-            pincode: '110024',
-            city: 'New Delhi',
-            time: '12:15 PM'
-          }
-        }
-      ],
-      '3W': [
-        { 
-          orderId: 'ORD003', 
-          date: '2024-02-01', 
-          amount: 300, 
-          status: 'Completed', 
-          customer: 'Carol Davis', 
-          customerMobile: '9000000003',
-          pickup: {
-            location: 'Karol Bagh, Central Delhi',
-            pincode: '110005',
-            city: 'New Delhi',
-            time: '02:00 PM'
-          },
-          drop: {
-            location: 'Dwarka Sector 12, West Delhi',
-            pincode: '110075',
-            city: 'New Delhi',
-            time: '03:30 PM'
-          }
-        }
-      ],
-      'Truck': [
-        { 
-          orderId: 'ORD004', 
-          date: '2024-03-10', 
-          amount: 800, 
-          status: 'Completed', 
-          customer: 'David Wilson', 
-          customerMobile: '9000000004',
-          pickup: {
-            location: 'Industrial Area, Okhla',
-            pincode: '110020',
-            city: 'New Delhi',
-            time: '08:00 AM'
-          },
-          drop: {
-            location: 'Gurgaon Cyber City',
-            pincode: '122002',
-            city: 'Gurgaon',
-            time: '10:00 AM'
-          }
-        }
-      ]
-    },
-    transactions: [
-      { id: 'TXN001', date: '2024-04-01', type: 'Earnings', amount: 1000 },
-      { id: 'TXN002', date: '2024-04-10', type: 'Withdrawal', amount: -500 },
-      { id: 'TXN003', date: '2024-05-01', type: 'Bonus', amount: 200 }
-    ],
-    documents: {
-      aadharFront: 'aadhar_front_john.pdf',
-      aadharBack: 'aadhar_back_john.pdf',
-      panCard: 'pan_card_john.pdf',
-      drivingLicense: 'driving_license_john.pdf'
-    }
-  },
-  {
-    id: 'DRV002',
-    name: 'Jane Smith',
-    status: 'Pending',
-    mobile: '9123456780',
-    email: 'jane.smith@email.com',
-    joiningDate: '2023-03-20',
-    driverId: 'DRV002',
-    rating: 3.8,
-    totalOrders: 89,
-    completedOrders: 78,
-    cancelledOrders: 5,
-    totalEarnings: 28900,
-    address: '456 Market Rd, City B, State - 234567',
-    vehicleType: '3W',
-    online: false,
-    licenseNumber: 'DL-6543210987654',
-    aadharNumber: '2345-6789-0123',
-    panNumber: 'XYZAB9876K',
-    lastActive: '2024-01-23 18:45',
-    bank: {
-      accountNumber: '0987654321',
-      ifsc: 'HDFC0005678',
-      bankName: 'HDFC Bank',
-      branch: 'Market Road',
-      holder: 'Jane Smith'
-    },
-    balance: 1800,
-    vehicleDetails: {
-      model: 'Bajaj RE Auto Rickshaw',
-      registrationNumber: 'MH-02-CD-5678',
-      color: 'Yellow',
-      year: '2021'
-    },
-    currentOrder: { 
-      id: 'ORD124', 
-      item: 'Groceries Package', 
-      status: 'Delivered',
-      pickup: 'Market Road, City C',
-      drop: 'Mall Road, City D',
-      amount: 320,
-      deliveredAt: '2024-01-24 12:30'
-    },
-    orders: {
-      '2W': [
-        { 
-          orderId: 'ORD005', 
-          date: '2024-01-20', 
-          amount: 180, 
-          status: 'Completed', 
-          customer: 'Eva Brown', 
-          customerMobile: '9000000005',
-          pickup: {
-            location: 'Rajouri Garden, West Delhi',
-            pincode: '110027',
-            city: 'New Delhi',
-            time: '10:00 AM'
-          },
-          drop: {
-            location: 'Pitampura, North Delhi',
-            pincode: '110034',
-            city: 'New Delhi',
-            time: '11:30 AM'
-          }
-        }
-      ],
-      '3W': [
-        { 
-          orderId: 'ORD006', 
-          date: '2024-02-05', 
-          amount: 350, 
-          status: 'Completed', 
-          customer: 'Frank Miller', 
-          customerMobile: '9000000006',
-          pickup: {
-            location: 'Saket, South Delhi',
-            pincode: '110017',
-            city: 'New Delhi',
-            time: '03:00 PM'
-          },
-          drop: {
-            location: 'Greater Noida Sector 1',
-            pincode: '201310',
-            city: 'Greater Noida',
-            time: '04:45 PM'
-          }
-        }
-      ],
-      'Truck': []
-    },
-    transactions: [
-      { id: 'TXN004', date: '2024-04-05', type: 'Earnings', amount: 800 },
-      { id: 'TXN005', date: '2024-04-15', type: 'Withdrawal', amount: -300 }
-    ],
-    documents: {
-      aadharFront: 'aadhar_front_jane.pdf',
-      aadharBack: 'aadhar_back_jane.pdf',
-      panCard: 'pan_card_jane.pdf',
-      drivingLicense: 'driving_license_jane.pdf'
-    }
-  },
-  {
-    id: 'DRV003',
-    name: 'Amit Kumar',
-    status: 'Suspended',
-    mobile: '9988776655',
-    email: 'amit.kumar@email.com',
-    joiningDate: '2022-08-10',
-    driverId: 'DRV003',
-    rating: 4.0,
-    totalOrders: 234,
-    completedOrders: 218,
-    cancelledOrders: 12,
-    totalEarnings: 89200,
-    address: '789 Warehouse Ln, City C, State - 345678',
-    vehicleType: 'Truck',
-    online: false,
-    licenseNumber: 'DL-7890123456789',
-    aadharNumber: '3456-7890-1234',
-    panNumber: 'LMNOP5432Q',
-    lastActive: '2024-01-20 09:15',
-    bank: {
-      accountNumber: '1122334455',
-      ifsc: 'ICIC0009012',
-      bankName: 'ICICI Bank',
-      branch: 'Industrial Area',
-      holder: 'Amit Kumar'
-    },
-    balance: 4200,
-    vehicleDetails: {
-      model: 'Tata 407 Truck',
-      registrationNumber: 'MH-03-EF-9012',
-      color: 'Blue',
-      year: '2020'
-    },
-    currentOrder: { 
-      id: 'ORD125', 
-      item: 'Furniture Package', 
-      status: 'Pending',
-      pickup: 'Warehouse 1, Industrial Area',
-      drop: 'Shop 5, City E',
-      amount: 1200,
-      estimatedDelivery: '2024-01-25 10:00'
-    },
-    orders: {
-      '2W': [],
-      '3W': [],
-      'Truck': [
-        { 
-          orderId: 'ORD007', 
-          date: '2024-01-25', 
-          amount: 1200, 
-          status: 'Completed', 
-          customer: 'Grace Lee', 
-          customerMobile: '9000000007',
-          pickup: {
-            location: 'Warehouse Complex, Faridabad',
-            pincode: '121001',
-            city: 'Faridabad',
-            time: '07:30 AM'
-          },
-          drop: {
-            location: 'Noida Sector 62',
-            pincode: '201301',
-            city: 'Noida',
-            time: '09:45 AM'
-          }
-        },
-        { 
-          orderId: 'ORD008', 
-          date: '2024-02-10', 
-          amount: 1500, 
-          status: 'Completed', 
-          customer: 'Henry Taylor', 
-          customerMobile: '9000000008',
-          pickup: {
-            location: 'Industrial Area, Ghaziabad',
-            pincode: '201001',
-            city: 'Ghaziabad',
-            time: '06:00 AM'
-          },
-          drop: {
-            location: 'Gurgaon Cyber City',
-            pincode: '122002',
-            city: 'Gurgaon',
-            time: '08:30 AM'
-          }
-        }
-      ]
-    },
-    transactions: [
-      { id: 'TXN006', date: '2024-04-08', type: 'Earnings', amount: 1500 },
-      { id: 'TXN007', date: '2024-04-18', type: 'Withdrawal', amount: -800 },
-      { id: 'TXN008', date: '2024-05-02', type: 'Bonus', amount: 500 }
-    ],
-    documents: {
-      aadharFront: 'aadhar_front_amit.pdf',
-      aadharBack: 'aadhar_back_amit.pdf',
-      panCard: 'pan_card_amit.pdf',
-      drivingLicense: 'driving_license_amit.pdf',
-      bankPassbook: 'bank_passbook_amit.pdf',
-      vehicleRcFront: 'vehicle_rc_front_amit.pdf'
-    }
-  }
-];
+// const dummyDrivers = [
+//   {
+//     id: 'DRV001',
+//     name: 'John Doe',
+//     status: 'Active',
+//     mobile: '9876543210',
+//     email: 'john.doe@email.com',
+//     joiningDate: '2023-01-15',
+//     driverId: 'DRV001',
+//     rating: 4.5,
+//     totalOrders: 156,
+//     completedOrders: 142,
+//     cancelledOrders: 8,
+//     totalEarnings: 45600,
+//     address: '123 Main St, City A, State - 123456',
+//     vehicleType: '2W',
+//     online: true,
+//     licenseNumber: 'DL-1234567890123',
+//     aadharNumber: '1234-5678-9012',
+//     panNumber: 'ABCDE1234F',
+//     lastActive: '2024-01-24 14:30',
+//     bank: {
+//       accountNumber: '1234567890',
+//       ifsc: 'SBIN0001234',
+//       bankName: 'State Bank of India',
+//       branch: 'Connaught Place',
+//       holder: 'John Doe'
+//     },
+//     balance: 2500,
+//     vehicleDetails: {
+//       model: 'Honda Activa 6G',
+//       registrationNumber: 'MH-01-AB-1234',
+//       color: 'White',
+//       year: '2022'
+//     },
+//     currentOrder: { 
+//       id: 'ORD123', 
+//       item: 'Electronics Package', 
+//       status: 'In Transit',
+//       pickup: 'Sector 10, City A',
+//       drop: 'Sector 22, City B',
+//       amount: 450,
+//       estimatedDelivery: '2024-01-24 16:00'
+//     },
+//     orders: {
+//       '2W': [
+//         { 
+//           orderId: 'ORD001', 
+//           date: '2024-01-15', 
+//           amount: 150, 
+//           status: 'Completed', 
+//           customer: 'Alice Johnson', 
+//           customerMobile: '9000000001',
+//           pickup: {
+//             location: 'Sector 10, City A',
+//             pincode: '110001',
+//             city: 'New Delhi',
+//             time: '09:00 AM'
+//           },
+//           drop: {
+//             location: 'Sector 22, City B',
+//             pincode: '110022',
+//             city: 'New Delhi',
+//             time: '10:30 AM'
+//           }
+//         },
+//         { 
+//           orderId: 'ORD002', 
+//           date: '2024-01-16', 
+//           amount: 200, 
+//           status: 'Completed', 
+//           customer: 'Bob Smith', 
+//           customerMobile: '9000000002',
+//           pickup:
+//             location: 'Connaught Place, Central Delhi',
+//             pincode: '110001',
+//             city: 'New Delhi',
+//             time: '11:00 AM'
+//           },
+//           drop: {
+//             location: 'Lajpat Nagar, South Delhi',
+//             pincode: '110024',
+//             city: 'New Delhi',
+//             time: '12:15 PM'
+//           }
+//         }
+//       ],
+//       '3W': [
+//         { 
+//           orderId: 'ORD003', 
+//           date: '2024-02-01', 
+//           amount: 300, 
+//           status: 'Completed', 
+//           customer: 'Carol Davis', 
+//           customerMobile: '9000000003',
+//           pickup: {
+//             location: 'Karol Bagh, Central Delhi',
+//             pincode: '110005',
+//             city: 'New Delhi',
+//             time: '02:00 PM'
+//           },
+//           drop: {
+//             location: 'Dwarka Sector 12, West Delhi',
+//             pincode: '110075',
+//             city: 'New Delhi',
+//             time: '03:30 PM'
+//           }
+//         }
+//       ],
+//       'Truck': [
+//         { 
+//           orderId: 'ORD004', 
+//           date: '2024-03-10', 
+//           amount: 800, 
+//           status: 'Completed', 
+//           customer: 'David Wilson', 
+//           customerMobile: '9000000004',
+//           pickup: {
+//             location: 'Industrial Area, Okhla',
+//             pincode: '110020',
+//             city: 'New Delhi',
+//             time: '08:00 AM'
+//           },
+//           drop: {
+//             location: 'Gurgaon Cyber City',
+//             pincode: '122002',
+//             city: 'Gurgaon',
+//             time: '10:00 AM'
+//           }
+//         }
+//       ]
+//     },
+//     transactions: [
+//       { id: 'TXN001', date: '2024-04-01', type: 'Earnings', amount: 1000 },
+//       { id: 'TXN002', date: '2024-04-10', type: 'Withdrawal', amount: -500 },
+//       { id: 'TXN003', date: '2024-05-01', type: 'Bonus', amount: 200 }
+//     ],
+//     documents: {
+//       aadharFront: 'aadhar_front_john.pdf',
+//       aadharBack: 'aadhar_back_john.pdf',
+//       panCard: 'pan_card_john.pdf',
+//       drivingLicense: 'driving_license_john.pdf'
+//     }
+//   },
+//   {
+//     id: 'DRV002',
+//     name: 'Jane Smith',
+//     status: 'Pending',
+//     mobile: '9123456780',
+//     email: 'jane.smith@email.com',
+//     joiningDate: '2023-03-20',
+//     driverId: 'DRV002',
+//     rating: 3.8,
+//     totalOrders: 89,
+//     completedOrders: 78,
+//     cancelledOrders: 5,
+//     totalEarnings: 28900,
+//     address: '456 Market Rd, City B, State - 234567',
+//     vehicleType: '3W',
+//     online: false,
+//     licenseNumber: 'DL-6543210987654',
+//     aadharNumber: '2345-6789-0123',
+//     panNumber: 'XYZAB9876K',
+//     lastActive: '2024-01-23 18:45',
+//     bank: {
+//       accountNumber: '0987654321',
+//       ifsc: 'HDFC0005678',
+//       bankName: 'HDFC Bank',
+//       branch: 'Market Road',
+//       holder: 'Jane Smith'
+//     },
+//     balance: 1800,
+//     vehicleDetails: {
+//       model: 'Bajaj RE Auto Rickshaw',
+//       registrationNumber: 'MH-02-CD-5678',
+//       color: 'Yellow',
+//       year: '2021'
+//     },
+//     currentOrder: { 
+//       id: 'ORD124', 
+//       item: 'Groceries Package', 
+//       status: 'Delivered',
+//       pickup: 'Market Road, City C',
+//       drop: 'Mall Road, City D',
+//       amount: 320,
+//       deliveredAt: '2024-01-24 12:30'
+//     },
+//     orders: {
+//       '2W': [
+//         { 
+//           orderId: 'ORD005', 
+//           date: '2024-01-20', 
+//           amount: 180, 
+//           status: 'Completed', 
+//           customer: 'Eva Brown', 
+//           customerMobile: '9000000005',
+//           pickup: {
+//             location: 'Rajouri Garden, West Delhi',
+//             pincode: '110027',
+//             city: 'New Delhi',
+//             time: '10:00 AM'
+//           },
+//           drop: {
+//             location: 'Pitampura, North Delhi',
+//             pincode: '110034',
+//             city: 'New Delhi',
+//             time: '11:30 AM'
+//           }
+//         }
+//       ],
+//       '3W': [
+//         { 
+//           orderId: 'ORD006', 
+//           date: '2024-02-05', 
+//           amount: 350, 
+//           status: 'Completed', 
+//           customer: 'Frank Miller', 
+//           customerMobile: '9000000006',
+//           pickup: {
+//             location: 'Saket, South Delhi',
+//             pincode: '110017',
+//             city: 'New Delhi',
+//             time: '03:00 PM'
+//           },
+//           drop: {
+//             location: 'Greater Noida Sector 1',
+//             pincode: '201310',
+//             city: 'Greater Noida',
+//             time: '04:45 PM'
+//           }
+//         }
+//       ],
+//       'Truck': []
+//     },
+//     transactions: [
+//       { id: 'TXN004', date: '2024-04-05', type: 'Earnings', amount: 800 },
+//       { id: 'TXN005', date: '2024-04-15', type: 'Withdrawal', amount: -300 }
+//     ],
+//     documents: {
+//       aadharFront: 'aadhar_front_jane.pdf',
+//       aadharBack: 'aadhar_back_jane.pdf',
+//       panCard: 'pan_card_jane.pdf',
+//       drivingLicense: 'driving_license_jane.pdf'
+//     }
+//   },
+//   {
+//     id: 'DRV003',
+//     name: 'Amit Kumar',
+//     status: 'Suspended',
+//     mobile: '9988776655',
+//     email: 'amit.kumar@email.com',
+//     joiningDate: '2022-08-10',
+//     driverId: 'DRV003',
+//     rating: 4.0,
+//     totalOrders: 234,
+//     completedOrders: 218,
+//     cancelledOrders: 12,
+//     totalEarnings: 89200,
+//     address: '789 Warehouse Ln, City C, State - 345678',
+//     vehicleType: 'Truck',
+//     online: false,
+//     licenseNumber: 'DL-7890123456789',
+//     aadharNumber: '3456-7890-1234',
+//     panNumber: 'LMNOP5432Q',
+//     lastActive: '2024-01-20 09:15',
+//     bank: {
+//       accountNumber: '1122334455',
+//       ifsc: 'ICIC0009012',
+//       bankName: 'ICICI Bank',
+//       branch: 'Industrial Area',
+//       holder: 'Amit Kumar'
+//     },
+//     balance: 4200,
+//     vehicleDetails: {
+//       model: 'Tata 407 Truck',
+//       registrationNumber: 'MH-03-EF-9012',
+//       color: 'Blue',
+//       year: '2020'
+//     },
+//     currentOrder: { 
+//       id: 'ORD125', 
+//       item: 'Furniture Package', 
+//       status: 'Pending',
+//       pickup: 'Warehouse 1, Industrial Area',
+//       drop: 'Shop 5, City E',
+//       amount: 1200,
+//       estimatedDelivery: '2024-01-25 10:00'
+//     },
+//     orders: {
+//       '2W': [],
+//       '3W': [],
+//       'Truck': [
+//         { 
+//           orderId: 'ORD007', 
+//           date: '2024-01-25', 
+//           amount: 1200, 
+//           status: 'Completed', 
+//           customer: 'Grace Lee', 
+//           customerMobile: '9000000007',
+//           pickup: {
+//             location: 'Warehouse Complex, Faridabad',
+//             pincode: '121001',
+//             city: 'Faridabad',
+//             time: '07:30 AM'
+//           },
+//           drop: {
+//             location: 'Noida Sector 62',
+//             pincode: '201301',
+//             city: 'Noida',
+//             time: '09:45 AM'
+//           }
+//         },
+//         { 
+//           orderId: 'ORD008', 
+//           date: '2024-02-10', 
+//           amount: 1500, 
+//           status: 'Completed', 
+//           customer: 'Henry Taylor', 
+//           customerMobile: '9000000008',
+//           pickup: {
+//             location: 'Industrial Area, Ghaziabad',
+//             pincode: '201001',
+//             city: 'Ghaziabad',
+//             time: '06:00 AM'
+//           },
+//           drop: {
+//             location: 'Gurgaon Cyber City',
+//             pincode: '122002',
+//             city: 'Gurgaon',
+//             time: '08:30 AM'
+//           }
+//         }
+//       ]
+//     },
+//     transactions: [
+//       { id: 'TXN006', date: '2024-04-08', type: 'Earnings', amount: 1500 },
+//       { id: 'TXN007', date: '2024-04-18', type: 'Withdrawal', amount: -800 },
+//       { id: 'TXN008', date: '2024-05-02', type: 'Bonus', amount: 500 }
+//     ],
+//     documents: {
+//       aadharFront: 'aadhar_front_amit.pdf',
+//       aadharBack: 'aadhar_back_amit.pdf',
+//       panCard: 'pan_card_amit.pdf',
+//       drivingLicense: 'driving_license_amit.pdf',
+//       bankPassbook: 'bank_passbook_amit.pdf',
+//       vehicleRcFront: 'vehicle_rc_front_amit.pdf'
+//     }
+//   }
+// ];
 
 
-const filteredDocDrivers = dummyDrivers.filter(driver => {
-  if (docSearchTerm && !(driver.name || '').toLowerCase().includes((docSearchTerm || '').toLowerCase())) {
-    return false;
-  }
-  // Date filter logic...
-  const created = new Date(driver.joiningDate);
-  if (docDateFilter === 'today') {
-    return created >= startOfToday;
-  }
-  if (docDateFilter === 'week') {
-    return created >= startOfWeek;
-  }
-  if (docDateFilter === 'month') {
-    return created >= startOfMonth;
-  }
-  if (docDateFilter === 'custom') {
-    if (docCustomStart && created < new Date(docCustomStart)) return false;
-    if (docCustomEnd && created > new Date(docCustomEnd)) return false;
-  }
-  return true;
-});
 const vehicleTypes = [
   { label: '2W', icon: <DirectionsBikeIcon /> },
   { label: '3W', icon: <AirportShuttleIcon /> },
@@ -437,23 +428,87 @@ const vehicleTypes = [
 export default function DriverDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const driver = dummyDrivers.find((d) => d.id === id) || dummyDrivers[0];
-  const [tab, setTab] = useState(0);
-  const [balance, setBalance] = useState(driver.balance);
-  const [bankDialog, setBankDialog] = useState(false);
-  const [editBank, setEditBank] = useState({ ...driver.bank });
-  const [bankDetails, setBankDetails] = useState({ ...driver.bank });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+  // Initialize with default values
+  const [driver, setDriver] = useState({
+    name: '',
+    status: 'Pending',
+    mobile: '',
+    email: '',
+    driverId: '',
+    rating: 0,
+    totalOrders: 0,
+    completedOrders: 0,
+    totalEarnings: 0,
+    address: '',
+    documents: {},
+    orders: {},
+    transactions: [],
+    bank: {
+      accountNumber: '',
+      ifsc: '',
+      bankName: '',
+      branch: '',
+      holder: ''
+    },
+    balance: 0,
+    vehicleDetails: {
+      model: '',
+      registrationNumber: '',
+      color: '',
+      year: ''
+    }
+  });
+
+  // Initialize other states with default values
+  const [balance, setBalance] = useState(0);
+  const [bankDetails, setBankDetails] = useState({
+    accountNumber: '',
+    ifsc: '',
+    bankName: '',
+    branch: '',
+    holder: ''
+  });
+  const [editBank, setEditBank] = useState({
+    accountNumber: '',
+    ifsc: '',
+    bankName: '',
+    branch: '',
+    holder: ''
+  });
   const [addDialog, setAddDialog] = useState(false);
   const [addAmount, setAddAmount] = useState('');
   const [removeDialog, setRemoveDialog] = useState(false);
   const [removeAmount, setRemoveAmount] = useState('');
   const [documentDialog, setDocumentDialog] = useState({ open: false, document: null });
-  const [documents, setDocuments] = React.useState({
-    passbook: null,
-    rcFront: null,
-    rcBack: null,
-    insurance: null,
-  });
+
+  useEffect(() => {
+    fetchDriverData();
+  }, [id]);
+
+  const fetchDriverData = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/drivers/${id}`);
+      const data = await response.json();
+
+      if (data.success) {
+        setDriver(data.driver);
+        setBalance(data.driver.balance || 0);
+        setBankDetails(data.driver.bank || {});
+        setEditBank(data.driver.bank || {});
+      } else {
+        throw new Error(data.message || 'Failed to fetch driver details');
+      }
+    } catch (error) {
+      console.error('Error fetching driver:', error);
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleAddAmount = () => {
     const amt = parseFloat(addAmount);
@@ -473,8 +528,6 @@ export default function DriverDetail() {
     }
   };
 
-  
-
   const handleBankEditOpen = () => {
     setEditBank({ ...bankDetails });
     setBankDialog(true);
@@ -485,17 +538,13 @@ export default function DriverDetail() {
     setEditBank((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleBankEditSave = () => {
-    setBankDetails({ ...editBank });
-    setBankDialog(false);
-  };
-
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'Active': return 'success';
-      case 'Pending': return 'warning';
-      case 'Suspended': return 'error';
-      default: return 'default';
+  const handleBankEditSave = async () => {
+    try {
+      await updateDriverBank(id, editBank);
+      setBankDetails(editBank);
+      setBankDialog(false);
+    } catch (error) {
+      console.error('Error updating bank details:', error);
     }
   };
 
@@ -510,6 +559,78 @@ export default function DriverDetail() {
   const handleDocChange = (key, file) => {
     setDocuments(prev => ({ ...prev, [key]: file }));
   };
+
+  // const handleDocumentUpload = async (documentType, file) => {
+  //   try {
+  //     await uploadDriverDocument(id, documentType, file);
+  //     await fetchDriverData(); // Refresh documents
+  //   } catch (error) {
+  //     console.error('Error uploading document:', error);
+  //   }
+  // };
+
+  // Add these date constants
+  const today = new Date();
+  const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const startOfWeek = new Date(today);
+  startOfWeek.setDate(today.getDate() - today.getDay());
+  const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+
+  // Add these handlers for document management
+  const handleDocumentUpload = async (documentType, file) => {
+    try {
+      const formData = new FormData();
+      formData.append('document', file);
+      formData.append('type', documentType);
+      formData.append('driverId', driver._id);
+
+      const response = await fetch('/api/documents/upload', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!response.ok) throw new Error('Upload failed');
+
+      // Refresh driver data after successful upload
+      fetchDriverData();
+    } catch (error) {
+      console.error('Document upload failed:', error);
+      // Show error message to user
+    }
+  };
+
+  const handleDocumentDownload = async (documentType) => {
+    try {
+      const response = await fetch(`/api/documents/download/${driver._id}/${documentType}`);
+      if (!response.ok) throw new Error('Download failed');
+      
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${documentType}_${driver._id}.pdf`;
+      a.click();
+    } catch (error) {
+      console.error('Document download failed:', error);
+      // Show error message to user
+    }
+  };
+
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box sx={{ p: 3 }}>
+        <Alert severity="error">{error}</Alert>
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ 
@@ -1166,7 +1287,7 @@ export default function DriverDetail() {
                     </IconButton>
                     <IconButton 
                       size="small" 
-                      onClick={() => handleDocumentView(driver.documents.vehicleRcBack)}
+                      onClick={() => handleDocumentView(driver.documents.aadharFront)}
                       sx={{ mr: 1 }}
                     >
                       
@@ -1262,7 +1383,7 @@ export default function DriverDetail() {
                     </IconButton>
                     <IconButton 
                       size="small" 
-                      onClick={() => handleDocumentView(driver.documents.vehicleImageBack)}
+                      onClick={() => handleDocumentView(driver.documents.aadharFront)}
                       sx={{ mr: 1 }}
                     >
                       
@@ -1414,6 +1535,7 @@ export default function DriverDetail() {
                     <TableCell sx={{ fontWeight: 600 }}>S. No.</TableCell>
                     <TableCell sx={{ fontWeight: 600 }}>Order ID</TableCell>
                     <TableCell sx={{ fontWeight: 600 }}>Date</TableCell>
+                    <TableCell sx={{ fontWeight: 600 }}>Trip Type</TableCell> {/* Add this line */}
                     <TableCell sx={{ fontWeight: 600 }}>Pickup Location</TableCell>
                     <TableCell sx={{ fontWeight: 600 }}>Drop Location</TableCell>
                     <TableCell sx={{ fontWeight: 600 }}>Amount (₹)</TableCell>
@@ -1435,6 +1557,14 @@ export default function DriverDetail() {
                       <TableCell>{idx + 1}</TableCell>
                       <TableCell sx={{ fontWeight: 500 }}>{order.orderId}</TableCell>
                       <TableCell>{order.date}</TableCell>
+                      <TableCell>
+                        <Chip
+                          label={order.tripType || 'One Way'}
+                          size="small"
+                          color={order.tripType === 'Two Way' ? 'secondary' : 'primary'}
+                          sx={{ fontWeight: 600 }}
+                        />
+                      </TableCell>
                       <TableCell>
                         <Box>
                           <Typography variant="body2" sx={{ fontWeight: 600 }}>
@@ -1680,4 +1810,29 @@ export default function DriverDetail() {
       </Container>
     </Box>
   );
-}; 
+};
+
+// Example order object structure
+const orderExample = { 
+  orderId: 'ORD001', 
+  date: '2024-01-15', 
+  tripType: 'One Way', // or 'Two Way'
+  amount: 150, 
+  status: 'Completed', 
+  customer: 'Alice Johnson', 
+  customerMobile: '9000000001',
+  pickup: {
+    location: 'Sector 10, City A',
+    pincode: '110001',
+    city: 'New Delhi',
+    time: '09:00 AM'
+  },
+  drop: {
+    location: 'Sector 22, City B',
+    pincode: '110022',
+    city: 'New Delhi',
+    time: '10:30 AM'
+  },
+  returnPickup: null, // Only for Two Way trips
+  returnDrop: null   // Only for Two Way trips
+};
