@@ -215,6 +215,10 @@ const highOrderData = [
   }
 ];
 
+const [tab, setTab] = useState(0);
+  const tripTypes = ['One Way', 'Two Way'];
+  const [tripTypeTab, setTripTypeTab] = useState(0);
+
 // Add dummy wallet data
 const walletData = [
   { 
@@ -632,6 +636,34 @@ const ManageCustomer = () => {
       });
   }, []);
 
+
+  useEffect(() => {
+      setLoadingOrders(true);
+      getAllOrderBookings()
+        .then((data) => {
+          let bookings = [];
+          if (data && Array.isArray(data.bookings)) {
+            bookings = data.bookings.map((booking) => ({
+              orderId: booking._id,
+              customerId: booking.userId,
+              customerName: '', // If you have user name, map here
+              tripType: booking.trip_type === 'oneWay' ? 'One Way' : 'Two Way',
+              status: booking.isFinished === "true" ? 'Completed' : 'Pending',
+              amount: '', // If you have amount, map here
+              date: booking.bookingDate,
+              pickup: booking.pickupAddress,
+              drop: booking.dropAddress,
+            }));
+          }
+          setOrderData(bookings);
+        })
+        .catch((err) => {
+          console.error('Failed to fetch order bookings:', err);
+          setOrderData([]);
+        })
+        .finally(() => setLoadingOrders(false));
+    }, []);
+
   // Fetch bookings for selected user
   const handleShowBookings = (userId) => {
     setSelectedUserId(userId);
@@ -928,7 +960,24 @@ const ManageCustomer = () => {
                 allUsers.map((user, idx) => (
                   <TableRow key={user._id || idx}>
                     <TableCell>{user._id}</TableCell>
-                    <TableCell>{user.name}</TableCell>
+                    <TableCell>
+
+                        <Typography
+                              variant="body2"
+                              sx={{ 
+                                color: 'primary.main', 
+                                textDecoration: 'underline', 
+                                cursor: 'pointer',
+                                fontWeight: 600,
+                                '&:hover': {
+                                  color: 'primary.dark'
+                                }
+                              }}
+                            onClick={() => navigate(`/customers/${user.userId}`)}
+                          >
+                            {user.name}
+                            </Typography>
+                    </TableCell>
                     <TableCell>{user.email}</TableCell>
                     <TableCell>{user.number || user.mobile}</TableCell>
                     <TableCell>{user.role}</TableCell>
@@ -961,6 +1010,12 @@ const ManageCustomer = () => {
                   Clear
                 </Button>
               </Box>
+                <Tabs value={tripTypeTab} onChange={(e, v) => setTripTypeTab(v)} sx={{ mb: 3 }}>
+                  {tripTypes.map((type, index) => (
+                     <Tab key={type} label={type} />
+                       ))}
+                </Tabs>
+              
 
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
                 {/* <Tabs value={vehicleTypeTab} onChange={handleVehicleTypeChange}>
@@ -1627,7 +1682,7 @@ const ManageCustomer = () => {
                           <TableCell>
                             <Typography variant="body2" color="text.secondary">
                               {row.lastTransaction !== 'N/A' ? new Date(row.lastTransaction).toLocaleDateString() : 'N/A'}
-                            </Typography                          </TableCell>
+                            </Typography  >                        </TableCell>
                         </TableRow>
                       ))
                     )}

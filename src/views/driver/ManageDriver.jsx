@@ -259,7 +259,7 @@ const ManageDriver = () => {
       const userId = driver._id || driver.driverId;
       const response = await getUserById(userId);
       if (response.success && response.user) {
-        // Navigate to DriverDetail with the id parameter
+        // Use the consistent route path
         navigate(`/drivers/${userId}`, {
           state: { driver: response.user }
         });
